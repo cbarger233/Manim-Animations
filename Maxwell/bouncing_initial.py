@@ -1,3 +1,4 @@
+from pickle import TRUE
 from turtle import fillcolor, width
 from manim import *
 import numpy as np
@@ -425,16 +426,18 @@ class MultiplicityEx(MovingCameraScene):
             [[0, 1, 100, r"5.38\times 10^{80}", r"5.38\times 10^{80}"],
              [1, 196, 99, r"1.83\times 10^{80}", r"3.58\times 10^{82}"],
              [2, r"1.93\times 10^{4}", 98, r"6.15\times 10^{79}", r"1.19\times 10^{84}"],
-             [3, r"1.27\times 10^{6}", 97, r"2.06\times 10^{79}", r"2.62\times 10^{85}"],
              [r"\vdots",r"\vdots",r"\vdots",r"\vdots",r"\vdots"],
              [49, r"8.92\times 10^{51}", 51, r"2.11\times 10^{53}", r"1.88\times 10^{105}"],
              [50, r"4.37\times 10^{52}", 50, r"4.37\times 10^{52}", r"1.91\times 10^{105}"],
              [51, r"2.11\times 10^{53}", 51, r"8.92\times 10^{51}", r"1.88\times 10^{105}"],
              [r"\vdots",r"\vdots",r"\vdots",r"\vdots",r"\vdots"],
              [99, r"1.83\times 10^{80}", 1, 196, r"3.58\times 10^{82}"],
-             [100, r"5.38\times 10^{80}", 0, 1, r"5.38\times 10^80"]],
-            col_labels = [MathTex(r"q_A"), MathTex(r"\Omega_A"), MathTex(r"q_B"), MathTex(r"\Omega_B"), MathTex(r"\Omega_A \Omega_B")]
+             [100, r"5.38\times 10^{80}", 0, 1, r"5.38\times 10^{80}"]],
+            col_labels = [MathTex(r"q_A"), MathTex(r"\Omega_A"), MathTex(r"q_B"), MathTex(r"\Omega_B"), MathTex(r"\Omega_A \Omega_B")],
+            include_outer_lines = TRUE
         ).move_to(UP*20, RIGHT*20)
+        table.get_horizontal_lines()[:2].set_color(BLUE)
+        table.get_horizontal_lines()[3:].set_color(BLACK)
 
         self.play(FadeIn(table), self.camera.frame.animate.move_to(table.get_center()).scale(1.75))
         self.wait(3)
