@@ -1,4 +1,4 @@
-from turtle import fillcolor
+from turtle import fillcolor, width
 from manim import *
 import numpy as np
 import random
@@ -38,6 +38,24 @@ class SlowBacteria(Dot):
         speed[0] = speed[0] * 1.25
         speed[1] = speed[1] * 1.25
         speed[2] = speed[2] * 1.25
+        self.velocity = speed
+
+class NormalBacteria(Dot):
+    def __init__(self, point=ORIGIN, ** kwargs):
+        Dot.__init__(self, point=point, color=GREEN, radius=0.04, ** kwargs)
+
+        vel = 3.8
+        intervals = [[1.5, 2.2], [-2.2, -1.5]]
+        random.uniform(*random.choices(intervals, weights=[r[1]-r[0] for r in intervals])[0])
+        speeds = np.asarray([random.uniform(*random.choices(intervals,weights=[r[1]-r[0] for r in intervals])[0]) for i in range(2)])
+        speeds = np.append(speeds, np.sqrt(vel**2 + speeds[0]**2 + speeds[1]**2))
+        self.velocity = speeds
+
+    def update_speed(self):
+        speed = self.velocity
+        speed[0] = speed[0] * 0.56
+        speed[1] = speed[1] * 0.56
+        speed[2] = speed[2] * 0.56
         self.velocity = speed
 
 class Demon(VGroup):
@@ -342,3 +360,81 @@ class DemonTransfer(Scene):
         self.play(box.animate.set_color(BLUE))
         self.play(box2.animate.set_color(RED))
         self.wait(5)
+
+
+class MultiplicityEx(MovingCameraScene):
+    def construct(self):
+        box = Rectangle(width=5, height=5, grid_xstep=5.0/14.0, grid_ystep=5.0/14.0, fill_color=RED, fill_opacity=0.25, color=BLACK).shift(LEFT*2.5)
+        box2 = Rectangle(width=5, height=5, grid_xstep=5.0/14.0, grid_ystep=5.0/14.0, fill_color=BLUE, fill_opacity=0.25, color=BLACK).shift(RIGHT*2.5)
+        #fade in the boxes
+        self.play(FadeIn(box, box2))
+        particles = MathTex(r"q=100").next_to(box.get_right(), UP*11)
+        particles_A = MathTex(r"0\leq q_A\leq 100").next_to(box, DOWN)
+        particles_B = MathTex(r"0\leq q_B\leq 100").next_to(box2, DOWN)
+        A = Text("A").next_to(box, UP)
+        B = Text("B").next_to(box2, UP)
+        self.play(FadeIn(particles, particles_A, particles_B, A, B))
+
+        # Creation of the bacteria, placing them randomly in the box
+        bacteria_array = []
+        for i in range(0, 100):
+            bacteria_position = np.array([random.uniform(-4.7, 4.7), random.uniform(-2.3, 2.3), random.random()])
+            bacteria_array.append(NormalBacteria(bacteria_position))
+        list_bact = VGroup(*[bact for bact in bacteria_array])
+        self.play(FadeIn(list_bact))
+        #self.wait(2)
+
+        # Collision detection for the big box
+        def update_bigbox(bacteria, dt):
+            bacteria.acceleration = 2 * np.random.random_sample(3) - 1 # [-1, 1] interval
+            bacteria.velocity = bacteria.velocity + bacteria.acceleration * dt
+            bacteria.shift(bacteria.velocity * dt)
+
+            # Bounce off walls
+            if bacteria.get_left()[0] <= box.get_left()[0]+0.1 or bacteria.get_right()[0] >= box2.get_right()[0]-0.1:
+                bacteria.velocity[0] = -bacteria.velocity[0]
+
+            # Bounce off ground and roof
+            if bacteria.get_bottom()[1] <= box.get_bottom()[1]+0.1 or bacteria.get_top()[1] >= box.get_top()[1]-0.1:
+                bacteria.velocity[1] = -bacteria.velocity[1]
+
+        # Attach collision detection to updater
+        for bacteria in bacteria_array:
+            bacteria.add_updater(update_bigbox)
+        self.wait(5)
+
+        #Create the multiplicity formula and fade it in to the right of the simulation
+        multiplicity_formula = MathTex(r"\Omega = \begin{pmatrix} q+N-1 \\ q \end{pmatrix}").next_to(box2.get_right(), RIGHT)
+        self.play(FadeIn(multiplicity_formula))
+        group = VGroup(box, box2, multiplicity_formula)
+        self.play(self.camera.frame.animate.move_to(group.get_center()).scale(1.25))
+        self.wait(8)
+
+        #Move the multiplicity formula up and place the individual multiplicty formulas
+        # below the general one
+        self.play(multiplicity_formula.animate.shift(UP*1.8 + RIGHT*0.5))
+        multiplicity_A = MathTex(r"\Omega_A = \begin{pmatrix} q_A+N_A-1 \\ q \end{pmatrix}").next_to(multiplicity_formula, DOWN)
+        multiplicity_B = MathTex(r"\Omega_B = \begin{pmatrix} q_B+N_B-1 \\ q \end{pmatrix}").next_to(multiplicity_A, DOWN)
+        self.play(FadeIn(multiplicity_A), FadeIn(multiplicity_B))
+        self.wait(5)
+
+        #Fade everything out or just make the table off screen somewhere and zoom in on it?
+        #Hmm, decisions, decisions
+        #I'll just put it offscreen somewhere
+        table = MathTable(
+            [[0, 1, 100, r"5.38\times 10^{80}", r"5.38\times 10^{80}"],
+             [1, 196, 99, r"1.83\times 10^{80}", r"3.58\times 10^{82}"],
+             [2, r"1.93\times 10^{4}", 98, r"6.15\times 10^{79}", r"1.19\times 10^{84}"],
+             [3, r"1.27\times 10^{6}", 97, r"2.06\times 10^{79}", r"2.62\times 10^{85}"],
+             [r"\vdots",r"\vdots",r"\vdots",r"\vdots",r"\vdots"],
+             [49, r"8.92\times 10^{51}", 51, r"2.11\times 10^{53}", r"1.88\times 10^{105}"],
+             [50, r"4.37\times 10^{52}", 50, r"4.37\times 10^{52}", r"1.91\times 10^{105}"],
+             [51, r"2.11\times 10^{53}", 51, r"8.92\times 10^{51}", r"1.88\times 10^{105}"],
+             [r"\vdots",r"\vdots",r"\vdots",r"\vdots",r"\vdots"],
+             [99, r"1.83\times 10^{80}", 1, 196, r"3.58\times 10^{82}"],
+             [100, r"5.38\times 10^{80}", 0, 1, r"5.38\times 10^80"]],
+            col_labels = [MathTex(r"q_A"), MathTex(r"\Omega_A"), MathTex(r"q_B"), MathTex(r"\Omega_B"), MathTex(r"\Omega_A \Omega_B")]
+        ).move_to(UP*20, RIGHT*20)
+
+        self.play(FadeIn(table), self.camera.frame.animate.move_to(table.get_center()).scale(1.75))
+        self.wait(3)
