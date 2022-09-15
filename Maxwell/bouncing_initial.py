@@ -436,8 +436,28 @@ class MultiplicityEx(MovingCameraScene):
             col_labels = [MathTex(r"q_A"), MathTex(r"\Omega_A"), MathTex(r"q_B"), MathTex(r"\Omega_B"), MathTex(r"\Omega_A \Omega_B")],
             include_outer_lines = TRUE
         ).move_to(UP*20, RIGHT*20)
-        table.get_horizontal_lines()[:2].set_color(BLUE)
-        table.get_horizontal_lines()[3:].set_color(BLACK)
+        table.get_horizontal_lines().set_color(BLACK)
+        table.get_vertical_lines().set_color(BLACK)
 
-        self.play(FadeIn(table), self.camera.frame.animate.move_to(table.get_center()).scale(1.75))
-        self.wait(3)
+        table.add_highlighted_cell((1, 1), color=GREEN, fill_opacity=0.45)
+        table.add_highlighted_cell((1, 2), color=BLUE, fill_opacity=0.45)
+        table.add_highlighted_cell((1, 3), color=GREEN, fill_opacity=0.45)
+        table.add_highlighted_cell((1, 4), color=BLUE, fill_opacity=0.45)
+        table.add_highlighted_cell((1, 5), color=PURPLE, fill_opacity=0.45)
+
+        for i in range(1, 11):
+            table.add_highlighted_cell((i+1, 1), color=GREEN, fill_opacity=0.3)
+            table.add_highlighted_cell((i+1, 2), color=BLUE, fill_opacity=0.3)
+            table.add_highlighted_cell((i+1, 3), color=GREEN, fill_opacity=0.3)
+            table.add_highlighted_cell((i+1, 4), color=BLUE, fill_opacity=0.3)
+            table.add_highlighted_cell((i+1, 5), color=PURPLE, fill_opacity=0.3)
+
+        self.play(FadeIn(table), self.camera.frame.animate.move_to(table.get_center()).scale(1.7))
+        self.wait(3) #time (in seconds) the table remains on-screen alone
+
+
+        #Displaying facts about most likely and least likely microstates
+        total_micros = MathTex(r"\mathrm{Total: }2.69\times 10^{106}").next_to(table.get_columns()[-1], DOWN*2 + LEFT*0.5)
+        graph = ImageMobject("./microstates.jpg").next_to(table.get_columns()[-1], RIGHT)
+        self.play(FadeIn(total_micros, graph))
+        self.wait(4)
