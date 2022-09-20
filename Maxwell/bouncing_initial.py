@@ -461,3 +461,9 @@ class MultiplicityEx(MovingCameraScene):
         graph = ImageMobject("./microstates.jpg").next_to(table.get_columns()[-1], RIGHT)
         self.play(FadeIn(total_micros, graph))
         self.wait(4)
+
+class Testing(Scene):
+    def construct(self):
+        graph = ImageMobject("microstates.png")
+        self.play(FadeIn(graph))
+        self.wait(8)
