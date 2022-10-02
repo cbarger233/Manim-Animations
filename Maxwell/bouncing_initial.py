@@ -457,13 +457,21 @@ class MultiplicityEx(MovingCameraScene):
 
 
         #Displaying facts about most likely and least likely microstates
-        total_micros = MathTex(r"\mathrm{Total: }2.69\times 10^{106}").next_to(table.get_columns()[-1], DOWN*2 + LEFT*0.5)
-        graph = ImageMobject("./microstates.jpg").next_to(table.get_columns()[-1], RIGHT)
-        self.play(FadeIn(total_micros, graph))
-        self.wait(4)
+        total_micros = MathTex(r"\mathrm{Total: }2.69\times 10^{106}").next_to(table.get_columns()[-1], DOWN*2)
+        #config.assets_dir = "C:/Users/cbarg/OneDrive/Desktop/Manim Testing/Maxwell/assets"
+        graph = ImageMobject("C:/Users/cbarg/OneDrive/Desktop/Manim Testing/Maxwell/microstates.png").next_to(table.get_columns()[-1], RIGHT*80)
+        graph.scale(10)
+        self.play(FadeIn(total_micros))
+        self.play(Indicate(total_micros))
+        self.wait(5)
+
+        self.play(FadeIn(graph), self.camera.frame.animate.move_to(graph.get_center()).scale(1.4))
+        self.wait(10)
 
 class Testing(Scene):
     def construct(self):
-        graph = ImageMobject("microstates.png")
+        config.assets_dir = "C:/Users/cbarg/OneDrive/Desktop/Manim Testing/Maxwell/assets"
+        graph = ImageMobject("../assets/microstates.png")
+        graph.scale(3)
         self.play(FadeIn(graph))
         self.wait(8)
