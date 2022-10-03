@@ -270,7 +270,9 @@ class BouncingBacteria(Scene):
 
         self.wait(15)
 
-
+#Need to fix this scene.
+#I want the scene to zoom in to the barrier between boxes
+#and show the transfer up close rather than broadly like it does now
 class DemonTransfer(Scene):
     def construct(self):
 
@@ -475,3 +477,62 @@ class Testing(Scene):
         graph.scale(3)
         self.play(FadeIn(graph))
         self.wait(8)
+
+
+class MultiplicityLesson(MovingCameraScene):
+    def construct(self):
+        config.assets_dir = "C:/Users/cbarg/OneDrive/Desktop/Manim Testing/Maxwell/assets"
+        quarter = ImageMobject("../quarter.png").scale(0.8).shift(4*LEFT + 2*UP)
+        dime = ImageMobject("../dime.png").scale(0.25).next_to(quarter, DOWN).shift(UP*.3)
+        penny = ImageMobject("../penny.png").scale(0.22).next_to(dime, DOWN)
+        self.play(FadeIn(quarter), FadeIn(dime), FadeIn(penny))
+        self.wait(3)
+
+        table = Table(
+            [["H", "H", "H"],
+             ["H", "H", "T"],
+             ["H", "T", "H"],
+             ["T", "H", "H"],
+             ["H", "T", "T"],
+             ["T", "H", "T"],
+             ["T", "T", "H"],
+             ["T", "T", "T"]],
+            col_labels = [Text("Quarter"), Text("Dime"), Text("Penny")],
+            include_outer_lines = TRUE
+        ).scale(0.5).shift(RIGHT)
+        self.play(Write(table), run_time=3)
+        self.wait(3)
+
+        br = Brace(table.get_rows()[1:], sharpness=1, direction=RIGHT, buff=0.8)
+        br_text = br.get_text("Microstates")
+        self.play(Write(br), Write(br_text))
+        self.wait(2)
+        self.play(FadeOut(br_text), FadeOut(br))
+
+        macrostates_text = Text("Macrostates", font_size=35).next_to(table, RIGHT)
+        self.play(Write(macrostates_text))
+
+        #Play the first example of a macrostate
+        macrostate_1 = Text("Three Hs", color=GREEN).next_to(macrostates_text, DOWN, buff=0.5)
+        c1 = table.get_highlighted_cell((2,0), color=GREEN)
+        c2 = table.get_highlighted_cell((2,1), color=GREEN)
+        c3 = table.get_highlighted_cell((2,2), color=GREEN)
+        self.play(Write(macrostate_1))
+        table.add_to_back(c1, c2, c3)
+        self.wait(3)
+        self.play(FadeOut(macrostate_1), FadeOut(c1), FadeOut(c2), FadeOut(c3))
+        self.wait(2)
+
+
+        #Play the second example of a macrostate
+        macrostate_2 = Text("Two Ts", color=GREEN).next_to(macrostates_text, DOWN, buff=0.5)
+        c4 = table.get_highlighted_cell((6,0), color=GREEN)
+        c5 = table.get_highlighted_cell((6,1), color=GREEN)
+        c6 = table.get_highlighted_cell((6,2), color=GREEN)
+        c7 = table.get_highlighted_cell((8,0), color=GREEN)
+        c8 = table.get_highlighted_cell((8,1), color=GREEN)
+        c9 = table.get_highlighted_cell((8,2), color=GREEN)
+        self.play(Write(macrostate_2), FadeIn(c4), FadeIn(c5), FadeIn(c6), FadeIn(c7), FadeIn(c8), FadeIn(c9))
+        self.wait(3)
+        self.play(FadeOut(macrostate_2), FadeOut(c4), FadeOut(c5), FadeOut(c6), FadeOut(c7), FadeOut(c8), FadeOut(c9))
+        self.wait(3)
