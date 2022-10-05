@@ -522,6 +522,7 @@ class MultiplicityLesson(MovingCameraScene):
         self.wait(3)
         self.play(FadeOut(macrostate_1), FadeOut(c1), FadeOut(c2), FadeOut(c3))
         self.wait(2)
+        table.remove(c1, c2, c3)
 
 
         #Play the second example of a macrostate
@@ -532,7 +533,13 @@ class MultiplicityLesson(MovingCameraScene):
         c7 = table.get_highlighted_cell((8,0), color=GREEN)
         c8 = table.get_highlighted_cell((8,1), color=GREEN)
         c9 = table.get_highlighted_cell((8,2), color=GREEN)
-        self.play(Write(macrostate_2), FadeIn(c4), FadeIn(c5), FadeIn(c6), FadeIn(c7), FadeIn(c8), FadeIn(c9))
+        c10 = table.get_highlighted_cell((7,0), color=GREEN)
+        c11 = table.get_highlighted_cell((7,1), color=GREEN)
+        c12 = table.get_highlighted_cell((7,2), color=GREEN)
+        #self.play(Write(macrostate_2), FadeIn(c4), FadeIn(c5), FadeIn(c6), FadeIn(c7), FadeIn(c8), FadeIn(c9), FadeIn(c10), FadeIn(c11), FadeIn(c12))
+        self.play(Write(macrostate_2))
+        table.add_to_back(c4, c5, c6, c7, c8, c9, c10, c11, c12)
+        self.add(table)
         self.wait(3)
-        self.play(FadeOut(macrostate_2), FadeOut(c4), FadeOut(c5), FadeOut(c6), FadeOut(c7), FadeOut(c8), FadeOut(c9))
+        self.play(FadeOut(macrostate_2), FadeOut(c4), FadeOut(c5), FadeOut(c6), FadeOut(c7), FadeOut(c8), FadeOut(c9), FadeOut(c10), FadeOut(c11), FadeOut(c12))
         self.wait(3)
