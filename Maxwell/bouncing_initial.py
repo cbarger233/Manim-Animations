@@ -1,5 +1,5 @@
 from pickle import TRUE
-from turtle import fillcolor, width
+from turtle import down, fillcolor, width
 from manim import *
 import numpy as np
 import random
@@ -167,7 +167,7 @@ class Demon(VGroup):
                 rate_func=linear
             ))
 
-
+#First scene explaining what the second law is
 class BouncingBacteria(Scene):
     def construct(self):
         # Create objects
@@ -364,7 +364,9 @@ class DemonTransfer(Scene):
         self.play(box2.animate.set_color(RED))
         self.wait(5)
 
-
+#Maybe add a scene before this one explaining how
+#to get the formula for the multiplicity of an einstein solid
+#Fourth scene explaining multiplicity of Einstein solids
 class MultiplicityEx(MovingCameraScene):
     def construct(self):
         box = Rectangle(width=5, height=5, grid_xstep=5.0/14.0, grid_ystep=5.0/14.0, fill_color=RED, fill_opacity=0.25, color=BLACK).shift(LEFT*2.5)
@@ -478,13 +480,13 @@ class Testing(Scene):
         self.play(FadeIn(graph))
         self.wait(8)
 
-
+#Second Scene with the multiplicity of the coins
 class MultiplicityLesson(MovingCameraScene):
     def construct(self):
         config.assets_dir = "C:/Users/cbarg/OneDrive/Desktop/Manim Testing/Maxwell/assets"
-        quarter = ImageMobject("../quarter.png").scale(0.8).shift(4*LEFT + 2*UP)
-        dime = ImageMobject("../dime.png").scale(0.25).next_to(quarter, DOWN).shift(UP*.3)
-        penny = ImageMobject("../penny.png").scale(0.22).next_to(dime, DOWN)
+        quarter = ImageMobject("../quarter.png").scale(1.2).shift(3*LEFT)
+        dime = ImageMobject("../dime.png").scale(0.38).next_to(quarter, RIGHT)
+        penny = ImageMobject("../penny.png").scale(0.33).next_to(dime, RIGHT)
         self.play(FadeIn(quarter), FadeIn(dime), FadeIn(penny))
         self.wait(3)
 
@@ -499,9 +501,22 @@ class MultiplicityLesson(MovingCameraScene):
              ["T", "T", "T"]],
             col_labels = [Text("Quarter"), Text("Dime"), Text("Penny")],
             include_outer_lines = TRUE
-        ).scale(0.5).shift(RIGHT)
-        self.play(Write(table), run_time=3)
+        ).scale(0.5).shift(LEFT*3.3 + DOWN*0.5)
+
+        quarter2 = ImageMobject("../quarter.png").scale(0.3).next_to(table.get_cell(pos=(1,1)), UP*0.28)
+        dime2 = ImageMobject("../dime.png").scale(0.13).next_to(table.get_cell(pos=(1,2)), UP)
+        penny2 = ImageMobject("../penny.png").scale(0.088).next_to(table.get_cell(pos=(1,3)), UP)
+
+        self.play(
+            Write(table),
+            Transform(quarter, quarter2), #change size of quarter
+            Transform(dime, dime2),
+            Transform(penny, penny2),
+            run_time=3
+        )
         self.wait(3)
+
+
 
         br = Brace(table.get_rows()[1:], sharpness=1, direction=RIGHT, buff=0.8)
         br_text = br.get_text("Microstates")
@@ -509,24 +524,28 @@ class MultiplicityLesson(MovingCameraScene):
         self.wait(2)
         self.play(FadeOut(br_text), FadeOut(br))
 
-        macrostates_text = Text("Macrostates", font_size=35).next_to(table, RIGHT)
+        macrostates_text = Text("Macrostates", font_size=35).next_to(table, RIGHT*1.5)
         self.play(Write(macrostates_text))
 
         #Play the first example of a macrostate
-        macrostate_1 = Text("Three Hs", color=GREEN).next_to(macrostates_text, DOWN, buff=0.5)
+        macrostate_1 = Text("Three Hs", color=GREEN).shift(RIGHT*4.5, UP*3)
         c1 = table.get_highlighted_cell((2,0), color=GREEN)
         c2 = table.get_highlighted_cell((2,1), color=GREEN)
         c3 = table.get_highlighted_cell((2,2), color=GREEN)
-        self.play(Write(macrostate_1))
+        #get highlighted row copy
+        row_copy = table.get_rows()[1].copy()
+        row_copy_to = row_copy.copy()
+        row_copy_to.next_to(macrostate_1, DOWN*3)
+        self.play(Write(macrostate_1), Transform(row_copy, row_copy_to))
         table.add_to_back(c1, c2, c3)
         self.wait(3)
-        self.play(FadeOut(macrostate_1), FadeOut(c1), FadeOut(c2), FadeOut(c3))
+        self.play(FadeOut(macrostate_1), FadeOut(c1), FadeOut(c2), FadeOut(c3), FadeOut(row_copy))
         self.wait(2)
         table.remove(c1, c2, c3)
 
 
         #Play the second example of a macrostate
-        macrostate_2 = Text("Two Ts", color=GREEN).next_to(macrostates_text, DOWN, buff=0.5)
+        macrostate_2 = Text("Two Ts", color=GREEN).shift(RIGHT*4.5, UP*3)
         c4 = table.get_highlighted_cell((6,0), color=GREEN)
         c5 = table.get_highlighted_cell((6,1), color=GREEN)
         c6 = table.get_highlighted_cell((6,2), color=GREEN)
@@ -536,10 +555,78 @@ class MultiplicityLesson(MovingCameraScene):
         c10 = table.get_highlighted_cell((7,0), color=GREEN)
         c11 = table.get_highlighted_cell((7,1), color=GREEN)
         c12 = table.get_highlighted_cell((7,2), color=GREEN)
-        #self.play(Write(macrostate_2), FadeIn(c4), FadeIn(c5), FadeIn(c6), FadeIn(c7), FadeIn(c8), FadeIn(c9), FadeIn(c10), FadeIn(c11), FadeIn(c12))
-        self.play(Write(macrostate_2))
+        row_copy = table.get_rows()[5].copy()
+        row_copy_to = row_copy.copy()
+        row_copy_to.next_to(macrostate_2, DOWN*3)
+        row_copy2 = table.get_rows()[6].copy()
+        row_copy_to2 = row_copy2.copy()
+        row_copy_to2.next_to(row_copy_to, DOWN)
+        row_copy3 = table.get_rows()[7].copy()
+        row_copy_to3 = row_copy3.copy()
+        row_copy_to3.next_to(row_copy_to2, DOWN)
+        self.play(Write(macrostate_2), Transform(row_copy, row_copy_to), Transform(row_copy2, row_copy_to2), Transform(row_copy3, row_copy_to3))
         table.add_to_back(c4, c5, c6, c7, c8, c9, c10, c11, c12)
         self.add(table)
         self.wait(3)
-        self.play(FadeOut(macrostate_2), FadeOut(c4), FadeOut(c5), FadeOut(c6), FadeOut(c7), FadeOut(c8), FadeOut(c9), FadeOut(c10), FadeOut(c11), FadeOut(c12))
+        
+
+
+        multiplicity = Text("Multiplicity", color=YELLOW).next_to(macrostate_2, DOWN*10.5)
+        omega = MathTex(r"\Omega").next_to(multiplicity, RIGHT).scale(1.2)
+        mult1 = MathTex(r"\Omega \left( 0\mathrm{T} \right)=1").next_to(multiplicity, DOWN)
+        mult2 = MathTex(r"\Omega \left( 1\mathrm{T} \right)=3").next_to(mult1, DOWN)
+        mult3 = MathTex(r"\Omega \left( 2\mathrm{T} \right)=3").next_to(mult2, DOWN)
+        mult4 = MathTex(r"\Omega \left( 3\mathrm{T} \right)=1").next_to(mult3, DOWN)
+        self.play(FadeIn(multiplicity), FadeIn(omega), FadeIn(mult3))
         self.wait(3)
+        mult_vgroup = VGroup(multiplicity, omega, mult3)
+        self.play(FadeOut(macrostate_2), FadeOut(row_copy), FadeOut(row_copy2), FadeOut(row_copy3), FadeOut(macrostates_text),
+            mult_vgroup.animate.shift(2*LEFT + 2*UP)
+        )
+        self.wait(3)
+        mult1.next_to(multiplicity, DOWN)
+        mult2.next_to(mult1, DOWN)
+        mult4.next_to(mult3, DOWN)
+        table.remove(c4, c5, c6, c7, c8, c9, c10, c11, c12)
+        self.play(FadeOut(c4), FadeOut(c5), FadeOut(c6), FadeOut(c7), FadeOut(c8), FadeOut(c9), FadeOut(c10), FadeOut(c11), FadeOut(c12))
+        self.wait(3)
+
+        c1 = table.get_highlighted_cell((2,0), color=GREEN)
+        c2 = table.get_highlighted_cell((2,1), color=GREEN)
+        c3 = table.get_highlighted_cell((2,2), color=GREEN)
+        table.add_to_back(c1, c2, c3)
+        self.add(table)
+        self.play(Write(mult1))
+        self.wait(3)
+        table.remove(c1, c2, c3)
+
+        self.play(FadeOut(c1), FadeOut(c2), FadeOut(c3))
+        c1 = table.get_highlighted_cell((5,0), color=GREEN)
+        c2 = table.get_highlighted_cell((5,1), color=GREEN)
+        c3 = table.get_highlighted_cell((5,2), color=GREEN)
+        c4 = table.get_highlighted_cell((3,0), color=GREEN)
+        c5 = table.get_highlighted_cell((3,1), color=GREEN)
+        c6 = table.get_highlighted_cell((3,2), color=GREEN)
+        c7 = table.get_highlighted_cell((4,0), color=GREEN)
+        c8 = table.get_highlighted_cell((4,1), color=GREEN)
+        c9 = table.get_highlighted_cell((4,2), color=GREEN)
+        table.add_to_back(c1, c2, c3, c4, c5, c6, c7, c8, c9)
+        self.add(table)
+        self.play(Write(mult2))
+        self.wait(3)
+        table.remove(c4, c5, c6, c7, c8, c9, c3, c2, c1)
+
+        self.play(FadeOut(c1), FadeOut(c2), FadeOut(c3), FadeOut(c4), FadeOut(c5), FadeOut(c6), FadeOut(c7), FadeOut(c8), FadeOut(c9))
+        c1 = table.get_highlighted_cell((9,0), color=GREEN)
+        c2 = table.get_highlighted_cell((9,1), color=GREEN)
+        c3 = table.get_highlighted_cell((9,2), color=GREEN)
+        table.add_to_back(c1, c2, c3)
+        self.add(table)
+        self.play(Write(mult4))
+        self.wait(3)
+        table.remove(c1, c2, c3)
+        self.play(FadeOut(c1), FadeOut(c2), FadeOut(c3))
+        self.add(table)
+        self.wait(3)
+
+#Third scene explaining the multiplicity of larger systems of coins
