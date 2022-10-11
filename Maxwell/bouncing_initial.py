@@ -475,7 +475,7 @@ class MultiplicityEx(MovingCameraScene):
 class Testing(Scene):
     def construct(self):
         config.assets_dir = "C:/Users/cbarg/OneDrive/Desktop/Manim Testing/Maxwell/assets"
-        graph = ImageMobject("../assets/microstates.png")
+        graph = ImageMobject("./microstates.png")
         graph.scale(3)
         self.play(FadeIn(graph))
         self.wait(8)
@@ -629,4 +629,39 @@ class MultiplicityLesson(MovingCameraScene):
         self.add(table)
         self.wait(3)
 
+
 #Third scene explaining the multiplicity of larger systems of coins
+class LargerMultiplicity(Scene):
+    def construct(self):
+        config.assets_dir = "C:/Users/cbarg/OneDrive/Desktop/Manim Testing/Maxwell/assets"
+
+        obj = Rectangle(height=0.35, width=0.85)
+        group = VGroup(*[obj.copy() for j in range(10)])
+        group.arrange(UP, buff=0.1).shift(LEFT*4.75)
+
+        right_mult = 2.1
+        group2 = group.copy().next_to(group, RIGHT*right_mult)
+        group3 = group.copy().next_to(group2, RIGHT*right_mult)
+        group4 = group.copy().next_to(group3, RIGHT*right_mult)
+        group5 = group.copy().next_to(group4, RIGHT*right_mult)
+        group6 = group.copy().next_to(group5, RIGHT*right_mult)
+        group7 = group.copy().next_to(group6, RIGHT*right_mult)
+        group8 = group.copy().next_to(group7, RIGHT*right_mult)
+        ensemble = VGroup(group, group2, group3, group4, group5, group6, group7, group8)
+        
+        self.play(Write(ensemble))
+        
+        self.wait(2)
+
+        #Figured out how to make the fills move up and down
+        #Now how to make this happen for all the columns at once?
+        #Might have to make a class representing a column
+        #And add a function to the class that does this? Could be viable
+        time_between_fills = 0.12
+        for i in range(5):
+            rand = random.randint(0,10)
+            for j in range(rand):
+                self.play(group2[j].animate.set_fill(YELLOW, opacity=0.8), run_time=time_between_fills)
+            for k in reversed(range(rand)):
+                self.play(group2[k].animate.set_fill(BLACK), run_time=time_between_fills)
+        self.wait(2)
