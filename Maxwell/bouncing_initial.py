@@ -3,6 +3,8 @@ from turtle import down, fillcolor, width
 from manim import *
 import numpy as np
 import random
+import time
+import itertools
 
 
 class FastBacteria(Dot):
@@ -472,14 +474,6 @@ class MultiplicityEx(MovingCameraScene):
         self.play(FadeIn(graph), self.camera.frame.animate.move_to(graph.get_center()).scale(1.4))
         self.wait(10)
 
-class Testing(Scene):
-    def construct(self):
-        config.assets_dir = "C:/Users/cbarg/OneDrive/Desktop/Manim Testing/Maxwell/assets"
-        graph = ImageMobject("./microstates.png")
-        graph.scale(3)
-        self.play(FadeIn(graph))
-        self.wait(8)
-
 #Second Scene with the multiplicity of the coins
 class MultiplicityLesson(MovingCameraScene):
     def construct(self):
@@ -628,6 +622,53 @@ class MultiplicityLesson(MovingCameraScene):
         self.play(FadeOut(c1), FadeOut(c2), FadeOut(c3))
         self.add(table)
         self.wait(3)
+
+
+class Battery(VGroup):
+    def __init__(self, **kwargs):
+        VGroup.__init__(self, **kwargs)
+        self.obj = Rectangle(height=0.35, width=0.85)
+        self.group = VGroup(*[self.obj.copy() for j in range(10)])
+        self.group.arrange(UP, buff=0.1)
+        self.add(self.group)
+
+    def fill_battery(self):
+        rand = random.randint(0, 10)
+        for j in range(rand):
+            self.group[j].set_fill(RED_D, opacity=0.80)
+    
+    def empty_battery(self):
+        for i in range(10):
+            self.group[i].set_fill(BLACK)
+
+class Testing(Scene):
+    def construct(self):
+        group1 = Battery().shift(LEFT)
+        group2 = Battery().shift(RIGHT)
+        self.play(FadeIn(group1, group2))
+        self.wait()
+        for i in range(5):
+            self.play(group1.animate.fill_battery(), group2.animate.fill_battery())
+            self.wait(0.2)
+            self.play(group1.animate.empty_battery(), group2.animate.empty_battery())
+            self.wait(0.2)
+        #group1.fill_battery(self)
+        # rand = []
+        # for i in range(2):
+        #     rand.append(random.randint(0,10))
+        # for i, j in itertools.zip_longest(range(rand[0]), range(rand[1]), fillvalue=0):
+        #     if j==0:
+        #         self.play(group1.group[i].animate.set_fill(YELLOW, opacity=0.8), run_time=0.1)
+        #         #self.wait(0.02)
+        #     if i==0:
+        #         self.play(group2.group[j].animate.set_fill(YELLOW, opacity=0.8), run_time=0.1)
+        #         #self.wait(0.02)
+        #     else:
+        #         self.play(group1.group[i].animate.set_fill(YELLOW, opacity=0.8),
+        #                   group2.group[j].animate.set_fill(YELLOW, opacity=0.8), run_time=0.1)
+        #         #self.wait(0.02)
+        self.wait()
+
 
 
 #Third scene explaining the multiplicity of larger systems of coins
