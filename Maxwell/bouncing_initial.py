@@ -5,6 +5,7 @@ import numpy as np
 import random
 import time
 import itertools
+from numpy import array
 
 
 class FastBacteria(Dot):
@@ -632,15 +633,25 @@ class Battery(VGroup):
         self.group.arrange(UP, buff=0.1)
         self.add(self.group)
 
-    def fill_battery(self):
+    def fill_battery(self, scene):
         rand = random.randint(0, 10)
         for j in range(rand):
-            self.group[j].set_fill(RED_D, opacity=0.80)
+            scene.play(self.group[j].animate.set_fill(RED_D, opacity=0.80), run_time=0.1)
+            #scene.wait(0.12)
     
-    def empty_battery(self):
-        for i in range(10):
-            self.group[i].set_fill(BLACK)
+    def empty_battery(self, scene):
+        for i in reversed(range(10)):
+            scene.play(self.group[i].animate.set_fill(BLACK), run_time=0.1)
+            #scene.wait(0.12)
 
+
+class DotsAndLines(VGroup):
+    def __init__(self, *vmobjects, **kwargs):
+        VGroup.__init__(self, *vmobjects, **kwargs)
+
+
+
+#Scene to test the filling and emptying of the batteries
 class Testing(Scene):
     def construct(self):
         group1 = Battery().shift(LEFT)
@@ -648,25 +659,12 @@ class Testing(Scene):
         self.play(FadeIn(group1, group2))
         self.wait()
         for i in range(5):
-            self.play(group1.animate.fill_battery(), group2.animate.fill_battery())
+            group1.fill_battery(self)
+            group2.fill_battery(self)
             self.wait(0.2)
-            self.play(group1.animate.empty_battery(), group2.animate.empty_battery())
+            group1.empty_battery(self)
+            group2.empty_battery(self)
             self.wait(0.2)
-        #group1.fill_battery(self)
-        # rand = []
-        # for i in range(2):
-        #     rand.append(random.randint(0,10))
-        # for i, j in itertools.zip_longest(range(rand[0]), range(rand[1]), fillvalue=0):
-        #     if j==0:
-        #         self.play(group1.group[i].animate.set_fill(YELLOW, opacity=0.8), run_time=0.1)
-        #         #self.wait(0.02)
-        #     if i==0:
-        #         self.play(group2.group[j].animate.set_fill(YELLOW, opacity=0.8), run_time=0.1)
-        #         #self.wait(0.02)
-        #     else:
-        #         self.play(group1.group[i].animate.set_fill(YELLOW, opacity=0.8),
-        #                   group2.group[j].animate.set_fill(YELLOW, opacity=0.8), run_time=0.1)
-        #         #self.wait(0.02)
         self.wait()
 
 
@@ -674,35 +672,38 @@ class Testing(Scene):
 #Third scene explaining the multiplicity of larger systems of coins
 class LargerMultiplicity(Scene):
     def construct(self):
-        config.assets_dir = "C:/Users/cbarg/OneDrive/Desktop/Manim Testing/Maxwell/assets"
+        #For the batteries, just copy the code from the Testing class above
+        #I'm leaving this out to avoid unnecessary rendering time
+        #Now I need to animate the formula for the multiplicity of an einstein solid
+        #and then make the ball and stick animation
+        mult = MathTex(r'\Omega(N,q) = \frac{\left( q+N-1 \right)!}{q! \left( N-1 \right)!}').scale(1.5)
+        dot1 = Dot(point=ORIGIN, color=BLUE, radius=0.2).shift(LEFT*9.7)
+        line1 = Line(start=[-9, -0.35, 0], end=[-9, 0.35, 0], stroke_width=9)
+        dot2 = Dot(point=LEFT*8.3, color=BLUE, radius=0.2)
+        dot3 = Dot(point=LEFT*7.6, color=BLUE, radius=0.2)
+        dot4 = Dot(point=LEFT*6.9, color=BLUE, radius=0.2)
+        line2 = Line(start=[-5.9, -0.35, 0], end=[-5.9, 0.35, 0], stroke_width=9)
+        line3 = Line(start=[-5.2, -0.35, 0], end=[-5.2, 0.35, 0], stroke_width=9)
+        dot5 = Dot(point=LEFT*4.5, color=BLUE, radius=0.2)
+        dot6 = Dot(point=LEFT*3.8, color=BLUE, radius=0.2)
+        dot7 = Dot(point=LEFT*3.1, color=BLUE, radius=0.2)
+        dot8 = Dot(point=LEFT*2.4, color=BLUE, radius=0.2)
 
-        obj = Rectangle(height=0.35, width=0.85)
-        group = VGroup(*[obj.copy() for j in range(10)])
-        group.arrange(UP, buff=0.1).shift(LEFT*4.75)
-
-        right_mult = 2.1
-        group2 = group.copy().next_to(group, RIGHT*right_mult)
-        group3 = group.copy().next_to(group2, RIGHT*right_mult)
-        group4 = group.copy().next_to(group3, RIGHT*right_mult)
-        group5 = group.copy().next_to(group4, RIGHT*right_mult)
-        group6 = group.copy().next_to(group5, RIGHT*right_mult)
-        group7 = group.copy().next_to(group6, RIGHT*right_mult)
-        group8 = group.copy().next_to(group7, RIGHT*right_mult)
-        ensemble = VGroup(group, group2, group3, group4, group5, group6, group7, group8)
+        everything = VGroup(dot1, dot2, dot3, dot4, dot5, dot6, dot7, dot8, line1, line2, line3).scale(1.5)
+        #everything.arrange(LEFT, buff=0.5)
+        everything.center().shift(DOWN*1.1)
+        self.play(Write(mult), run_time=3)
+        self.wait()
+        mult.generate_target()
+        mult.target.shift(2*UP)
+        self.play(MoveToTarget(mult))
+        self.play(Write(everything), mult.animate.scale(0.8))
+        self.wait()
         
-        self.play(Write(ensemble))
-        
-        self.wait(2)
 
-        #Figured out how to make the fills move up and down
-        #Now how to make this happen for all the columns at once?
-        #Might have to make a class representing a column
-        #And add a function to the class that does this? Could be viable
-        time_between_fills = 0.12
-        for i in range(5):
-            rand = random.randint(0,10)
-            for j in range(rand):
-                self.play(group2[j].animate.set_fill(YELLOW, opacity=0.8), run_time=time_between_fills)
-            for k in reversed(range(rand)):
-                self.play(group2[k].animate.set_fill(BLACK), run_time=time_between_fills)
-        self.wait(2)
+        choices = [dot1, dot2, dot3, dot4, dot5, dot6, dot7, dot8, line1, line2, line3]
+        for i in range(10):
+            self.play(Swap(random.choice(choices), random.choice(choices)))
+            self.wait(0.3)
+        self.wait()
+
