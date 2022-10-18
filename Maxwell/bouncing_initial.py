@@ -359,12 +359,11 @@ class DemonTransfer(Scene):
             fast.clear_updaters()
             slow.clear_updaters()
             demon.wave_arm(self)
-            self.play(Swap(fast, slow), run_time=2)
+            self.play(Swap(fast, slow, path_func=utils.paths.straight_path()), run_time=2.0)
             fast.add_updater(update_right_box)
             slow.add_updater(update_left_box)
 
-        self.play(box.animate.set_color(BLUE))
-        self.play(box2.animate.set_color(RED))
+        self.play(box.animate.set_color(BLUE), box2.animate.set_color(RED))
         self.wait(5)
 
 #Maybe add a scene before this one explaining how
@@ -637,17 +636,10 @@ class Battery(VGroup):
         rand = random.randint(0, 10)
         for j in range(rand):
             scene.play(self.group[j].animate.set_fill(RED_D, opacity=0.80), run_time=0.1)
-            #scene.wait(0.12)
     
     def empty_battery(self, scene):
         for i in reversed(range(10)):
             scene.play(self.group[i].animate.set_fill(BLACK), run_time=0.1)
-            #scene.wait(0.12)
-
-
-class DotsAndLines(VGroup):
-    def __init__(self, *vmobjects, **kwargs):
-        VGroup.__init__(self, *vmobjects, **kwargs)
 
 
 
@@ -701,9 +693,10 @@ class LargerMultiplicity(Scene):
         self.wait()
         
 
-        choices = [dot1, dot2, dot3, dot4, dot5, dot6, dot7, dot8, line1, line2, line3]
+        dots = [dot1, dot2, dot3, dot4, dot5, dot6, dot7, dot8]
+        lines = [line1, line2, line3]
         for i in range(10):
-            self.play(Swap(random.choice(choices), random.choice(choices)))
+            self.play(Swap(random.choice(dots), random.choice(lines)))
             self.wait(0.3)
         self.wait()
 
