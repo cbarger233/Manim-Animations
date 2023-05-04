@@ -52,7 +52,7 @@ class Oct18d22y(Scene):
         #self.play(third_step.animate.set_color_by_tex(r'-', YELLOW), run_time=0.1)
         self.wait()
 
-        #G  ive soolution to easy sub-integral
+        #Give soolution to easy sub-integral
         easy_integral = MathTex(r'=-\frac{1}{2}x^2 + c_1', color=YELLOW).next_to(third_step[3], DOWN)
         self.play(Write(easy_integral))
         self.wait()
@@ -171,7 +171,7 @@ class Oct18d22y(Scene):
         fifth_step = MathTex("=x\\tan (x)", "+\\ln (\\cos(x))", "+", "c_2", "-\\frac{1}{2}x^2 +c_1").scale(0.9)
         to_square_step_5 = VGroup(fifth_step[1], fifth_step[2], fifth_step[3])
         fifth_step_exp = Text("u-sub")
-        sixth_step = MathTex("=x\\tan (x)", "+\\ln (\\cos(x))", "+", "-\\frac{1}{2}x^2 +", "c").scale(0.9)
+        sixth_step = MathTex("=x\\tan (x)", "+\\ln (\\cos(x))", "-\\frac{1}{2}x^2 +", "c").scale(0.9)
 
         self.play(Write(prob))
         self.wait()
